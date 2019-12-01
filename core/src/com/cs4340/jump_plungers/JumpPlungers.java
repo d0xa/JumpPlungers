@@ -14,6 +14,7 @@ public class JumpPlungers extends Game {
 	public SpriteBatch batch; // so all screens have acess
 	public static final int vWidth =400;
 	public static final int vHeight=208;
+	public static final float PPM = 100; //Pixels Per Meter
 	public static AssetManager manager;
 	@Override
 	public void create () {

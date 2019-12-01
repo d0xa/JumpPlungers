@@ -25,6 +25,7 @@ import com.cs4340.jump_plungers.JumpPlungers;
 import com.cs4340.jump_plungers.Scenes.Hud;
 import com.cs4340.jump_plungers.Scenes.Player1Controller;
 import com.cs4340.jump_plungers.Scenes.Player2Controller;
+import com.cs4340.jump_plungers.Sprites.Player1;
 //import android.util.log;
 
 public class PlayScreen implements Screen {
@@ -44,6 +45,7 @@ public class PlayScreen implements Screen {
     private Player1Controller p1C;
     private Player2Controller p2C;
 
+    private Player1 player1;
     private Music music;
 
     public PlayScreen(JumpPlungers game){
@@ -52,21 +54,22 @@ public class PlayScreen implements Screen {
         //texture = new Texture("badlogic.jpg");
         gameCam = new OrthographicCamera();
 
-        gamePort = new FitViewport(JumpPlungers.vWidth,JumpPlungers.vHeight,gameCam); //screen size with camera
+        gamePort = new FitViewport(JumpPlungers.vWidth/JumpPlungers.PPM,JumpPlungers.vHeight/JumpPlungers.PPM,gameCam); //screen size with camera
         gamePort.apply();
         gameCam.setToOrtho(false,Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+
         hud = new Hud(game.batch);
         p1C = new Player1Controller(game.batch);
-
         p2C = new Player2Controller(game.batch);
+
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("Map1.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map);
+        renderer = new OrthogonalTiledMapRenderer(map,1/JumpPlungers.PPM);
         gameCam.position.set(gamePort.getWorldWidth() /2,gamePort.getWorldHeight()/2,0);
 
-        world = new World(new Vector2(0,0),true); //vector 2 is our gravity, setting everything to sleep unless pressed
+        world = new World(new Vector2(0,-10),true); //vector 2 is our gravity, setting everything to sleep unless pressed
         b2dr = new Box2DDebugRenderer();
-
+        player1 = new Player1(world);
         music = JumpPlungers.manager.get("Audio/fightone_160bpm.mp3",Music.class);
         music.setLooping(true);
         music.setVolume(0.3f);
@@ -76,14 +79,14 @@ public class PlayScreen implements Screen {
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
         Body body;
-
+        //creating ground fixtures
         for(MapObject object: map.getLayers().get(1).getObjects().getByType(RectangleMapObject.class) ) {
             Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
             bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rectangle.getX() / 2, rectangle.getY());
+            bdef.position.set((rectangle.getX() / 2)/JumpPlungers.PPM, (rectangle.getY())/JumpPlungers.PPM);
             body = world.createBody(bdef);
 
-            shape.setAsBox(rectangle.getWidth() / 2, rectangle.getHeight() / 2);
+            shape.setAsBox((rectangle.getWidth() / 2)/JumpPlungers.PPM, (rectangle.getHeight() / 2)/JumpPlungers.PPM);
             fdef.shape = shape;
             body.createFixture(fdef);
         }
@@ -91,10 +94,10 @@ public class PlayScreen implements Screen {
         for(MapObject object: map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class) ){
             Rectangle rectangle = ((RectangleMapObject)object).getRectangle();
             bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rectangle.getX()/2,rectangle.getY()/2);
+            bdef.position.set((rectangle.getX()/2)/JumpPlungers.PPM,(rectangle.getY()/2)/JumpPlungers.PPM);
             body = world.createBody(bdef);
 
-            shape.setAsBox(rectangle.getWidth()/2,rectangle.getHeight()/2);
+            shape.setAsBox((rectangle.getWidth()/2)/JumpPlungers.PPM,(rectangle.getHeight()/2)/JumpPlungers.PPM);
             fdef.shape = shape;
             body.createFixture(fdef);
 
@@ -106,14 +109,25 @@ public class PlayScreen implements Screen {
 
     }
     public void handleInput(float delta){
-        if(Gdx.input.isTouched()){
-            gameCam.position.x+=400*delta;
-            System.out.println(gameCam.position.x);
+        if(p1C.isJumpPressed()&& player1.body.getLinearVelocity().x >=-0.6){
+            player1.body.applyLinearImpulse(new Vector2(-0.2f,0), player1.body.getWorldCenter(),true);
+            System.out.println("P1 jump pressed");
         }
-
+        if(p1C.isLungePressed()&& player1.body.getLinearVelocity().x <=0.6){
+            player1.body.applyLinearImpulse(new Vector2(0.2f,0), player1.body.getWorldCenter(),true);
+            System.out.println("P1 lunge pressed");
+        }
+        if(p2C.isJumpPressed()){
+            player1.body.applyLinearImpulse(new Vector2(0,0.6f), player1.body.getWorldCenter(),true);
+            System.out.println("P2 jump pressed");
+        }
     }
     public void update(float delta){
         handleInput(delta);
+        world.step(1/60f,6,2);
+        //gameCam.position.y= player1.body.getPosition().y;
+        //if(player1.body.getPosition().x>JumpPlungers.vWidth/2/JumpPlungers.PPM)
+            gameCam.position.x = player1.body.getPosition().x+2f;
         gameCam.update();
         renderer.setView(gameCam);
 
@@ -136,18 +150,20 @@ public class PlayScreen implements Screen {
         hud.stage.draw();
 
         game.batch.setProjectionMatrix(Player1Controller.stage.getCamera().combined);
-        Player1Controller.stage.act(delta);
-        Player1Controller.stage.draw();
+        p1C.stage.act(delta);
+        p1C.stage.draw();
 
         game.batch.setProjectionMatrix(Player2Controller.stage.getCamera().combined);
-        Player2Controller.stage.act(delta);
-        Player2Controller.stage.draw();
+        p2C.stage.act(delta);
+        p2C.stage.draw();
 
     }
 
     @Override
     public void resize(int width, int height) {
         gamePort.update(width, height);
+        p1C.resize(width, height);
+        p2C.resize(width, height);
     }
 
     @Override

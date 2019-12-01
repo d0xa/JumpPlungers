@@ -7,11 +7,11 @@
   </data>
  </layer>
  <objectgroup id="2" name="Ground">
-  <object id="17" x="0" y="192" width="797.333" height="10.6667"/>
+  <object id="17" x="20" y="192" width="760" height="10.6667"/>
  </objectgroup>
  <objectgroup id="3" name="InvisibleWall" offsetx="5" offsety="-0.333333">
-  <object id="11" x="775" y="-2" width="22" height="207"/>
-  <object id="13" x="-9" y="0" width="24" height="209"/>
-  <object id="15" x="0" y="-16" width="816" height="28"/>
+  <object id="11" x="775" y="-2" width="19.3333" height="207"/>
+  <object id="13" x="-3.66667" y="0" width="18.6667" height="209"/>
+  <object id="15" x="16.6667" y="0.666667" width="756.667" height="11.3333"/>
  </objectgroup>
 </map>
