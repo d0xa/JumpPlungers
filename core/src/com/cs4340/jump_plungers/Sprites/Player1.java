@@ -31,7 +31,7 @@ public class Player1 extends Sprite {
         definePlayer1();
         //sprite = new Sprite();
 //        idle = (Texture)
-        player1Idle = new TextureRegion(screen.getAtlas().findRegion("idle"));
+        player1Idle = new TextureRegion(screen.getAtlas().findRegion("idle"),1,1,297,396);
         sprite = new Sprite(player1Idle);
         setPosition(1,1);
         setBounds(0,0,32,32);
