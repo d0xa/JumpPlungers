@@ -1,0 +1,36 @@
+ 
+Playable_characters.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+idle famous plunger
+  rotate: false
+  xy: 1, 1
+  size: 768, 768
+  orig: 768, 768
+  offset: 0, 0
+  index: -1
+
+Playable_characters2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+jump famous plunger
+  rotate: false
+  xy: 1, 1
+  size: 768, 768
+  orig: 768, 768
+  offset: 0, 0
+  index: -1
+
+Playable_characters3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+plunge famous plunger
+  rotate: false
+  xy: 1, 1
+  size: 768, 768
+  orig: 768, 768
+  offset: 0, 0
+  index: -1

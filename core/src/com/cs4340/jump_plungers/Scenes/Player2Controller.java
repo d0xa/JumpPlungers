@@ -36,8 +36,8 @@ public class Player2Controller {
         table.bottom();
         table.setFillParent(false);
 
-        p2jumpLabel = new Label("Jump", new  Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        p2lungeLabel = new Label("Lunge", new  Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        p2jumpLabel = new Label("Jump", new  Label.LabelStyle(new BitmapFont(), Color.BLACK));
+        p2lungeLabel = new Label("Lunge", new  Label.LabelStyle(new BitmapFont(), Color.BLACK));
 
         p2jumpLabel.setTouchable(Touchable.enabled);
         p2lungeLabel.setTouchable(Touchable.enabled);
