@@ -52,7 +52,7 @@ public class PlayScreen implements Screen {
     private Music music;
 
     public PlayScreen(JumpPlungers game){
-        atlas = new TextureAtlas("player1.pack");
+        atlas = new TextureAtlas("famousPlunger.atlas");
         //spriteBatch = new SpriteBatch();
         this.game = game;
         //texture = new Texture("badlogic.jpg");
@@ -79,7 +79,7 @@ public class PlayScreen implements Screen {
         music = JumpPlungers.manager.get("Audio/fightone_160bpm.mp3",Music.class);
         music.setLooping(true);
         music.setVolume(0.05f);
-        music.play();
+        //music.play();
 
 
 
@@ -127,9 +127,9 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gameCam.combined);
 
         game.batch.begin();
-        player1.draw(game.batch);
+        //player1.draw(game.batch);
         game.batch.end();
-        //System.out.println("player location : " + player1.body.getPosition());
+        System.out.println("sprite location : " + player1.sprite.getX() + " "+ player1.sprite.getY());
 
     }
 
@@ -146,13 +146,13 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         game.batch.begin();
         player1.draw(game.batch);
-        player1.update(delta);
+        //player1.update(delta);
         game.batch.end();
 
         hud.stage.act(delta);
         //spriteBatch.setProjectionMatrix(hud.stage.getCamera().combined);
         // hud.stage.act(delta);
-        hud.stage.draw();
+        //hud.stage.draw();
 
         game.batch.setProjectionMatrix(Player1Controller.stage.getCamera().combined);
         p1C.stage.act(delta);

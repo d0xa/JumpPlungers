@@ -16,7 +16,7 @@ import com.cs4340.jump_plungers.Screens.PlayScreen;
 public class Player1 extends Sprite {
     public World world;
     public Body body;
-    private Sprite sprite;
+    public static Sprite sprite;
     private TextureRegion player1Idle;
     private Texture idle;
     private Texture jump;
@@ -25,28 +25,29 @@ public class Player1 extends Sprite {
 
 
     public Player1(World world, PlayScreen screen){
-        super(screen.getAtlas().findRegion("idle famous plunger"));
+        super(screen.getAtlas().findRegion("idle"));
         //idle =super(screen.getAtlas().createSprite("player1.png"));
         this.world=world;
         definePlayer1();
-        player1Idle = new TextureRegion(getTexture(),0,0,16,16);
-        //player1Idle = new TextureRegion(screen.getAtlas().findRegion("player1.png",0));
-        //sprite = new Sprite(idle,768,768,16,16);
-        setBounds(32,32,16,16);
-        setRegion(player1Idle);
+        //sprite = new Sprite();
+//        idle = (Texture)
+        player1Idle = new TextureRegion(screen.getAtlas().findRegion("idle"));
+        sprite = new Sprite(player1Idle);
+        setPosition(1,1);
+        setBounds(0,0,32,32);
+        setRegion(sprite);
     }
     public void update(float dt){
-        setPosition(body.getPosition().x, body.getPosition().y);
+        setPosition(body.getPosition().x, body.getPosition().y );
     }
     private void definePlayer1() {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(0,32/JumpPlungers.PPM);
+        bodyDef.position.set(1,1);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
-
         FixtureDef fixtureDef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(5/JumpPlungers.PPM);
+        shape.setRadius(16);
         fixtureDef.shape=shape;
         body.createFixture(fixtureDef);
     }
