@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.3.0" orientation="orthogonal" renderorder="left-up" compressionlevel="0" width="60" height="20" tilewidth="10" tileheight="30" infinite="0" nextlayerid="4" nextobjectid="14">
+ <tileset firstgid="1" source="PC Computer - Undertale - Waterfall.tsx"/>
+ <layer id="1" name="background" width="60" height="20">
+  <data encoding="base64" compression="zlib">
+   eAHtl7ERwCAMA7kMkUzF4pkqeIHcp3hcRIU7nawHUTCPMWbD3Gtnx3Sw1s4O1toZ3j1nkPvd0/H0OX02OpD3m/drdMDoKvE0WIgnyWZoSDZDY7AQT4OFeJJshoZkMzQGC/E0WIgnyWZoSDZDY7AQT4OFeJJshoZkMzQGy5unwfDF81x//usnU6wPCUB9EQ==
+  </data>
+ </layer>
+ <objectgroup id="2" name="ground">
+  <object id="6" x="4" y="568.667" width="602.667" height="40.6667"/>
+ </objectgroup>
+ <objectgroup id="3" name="invisibleWall">
+  <object id="9" x="590" y="0" width="10" height="594"/>
+  <object id="11" x="0" y="0" width="9.09091" height="607.03"/>
+  <object id="12" x="20" y="0" width="570" height="40"/>
+  <object id="13" x="10" y="0" width="10" height="40"/>
+ </objectgroup>
+</map>

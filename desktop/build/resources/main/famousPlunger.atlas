@@ -1,0 +1,26 @@
+
+famousPlunger.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+idle
+  rotate: false
+  xy: 1, 1
+  size: 297, 396
+  orig: 297, 396
+  offset: 0, 0
+  index: -1
+jump
+  rotate: false
+  xy: 300, 1
+  size: 297, 396
+  orig: 297, 396
+  offset: 0, 0
+  index: -1
+lunge
+  rotate: false
+  xy: 599, 1
+  size: 297, 396
+  orig: 297, 396
+  offset: 0, 0
+  index: -1
