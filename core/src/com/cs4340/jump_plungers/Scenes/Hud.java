@@ -19,7 +19,7 @@ public class Hud implements Disposable {
     public Viewport viewport2;
     //private OrthographicCamera gameCam;
     private Integer roundTimer;
-    //private float timeCount;
+    private float timeCount;
     private Integer score1;
     private Integer score2;
 
@@ -33,7 +33,7 @@ public class Hud implements Disposable {
     Label p1lungeLabel;
 
     public Hud(SpriteBatch sb){
-        roundTimer = 99;
+        roundTimer = 15;
         score1 =0;
         score2 =0;
 
@@ -68,9 +68,25 @@ public class Hud implements Disposable {
         stage.addActor(table);
 
     }
-
+    public void update(float dt){
+        timeCount += dt;
+        if(timeCount>=1){
+            roundTimer--;
+            countdownLabel.setText(String.format("%02d",roundTimer));
+            timeCount=0;
+        }
+    }
+    public void timeOut(){
+        score1++;
+        score2++;
+        player1ScoreLabel.setText(String.format("%03d",score1));
+        player2ScoreLabel.setText(String.format("%03d",score2));
+    }
     @Override
     public void dispose() {
         stage.dispose();
+    }
+    public int getTime(){
+        return roundTimer;
     }
 }

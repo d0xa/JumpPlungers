@@ -27,6 +27,7 @@ import com.cs4340.jump_plungers.Scenes.Hud;
 import com.cs4340.jump_plungers.Scenes.Player1Controller;
 import com.cs4340.jump_plungers.Scenes.Player2Controller;
 import com.cs4340.jump_plungers.Sprites.Player1;
+import com.cs4340.jump_plungers.Sprites.Player2;
 import com.cs4340.jump_plungers.tools.b2worldCreator;
 //import android.util.log;
 
@@ -49,18 +50,19 @@ public class PlayScreen implements Screen {
     private Player2Controller p2C;
 
     private Player1 player1;
+    private Player2 player2;
     private Music music;
 
-    public PlayScreen(JumpPlungers game){
+    public PlayScreen(JumpPlungers game) {
         atlas = new TextureAtlas("famousPlunger.atlas");
         //spriteBatch = new SpriteBatch();
         this.game = game;
         //texture = new Texture("badlogic.jpg");
         gameCam = new OrthographicCamera();
 
-        gamePort = new FitViewport(JumpPlungers.vWidth/JumpPlungers.PPM,JumpPlungers.vHeight/JumpPlungers.PPM,gameCam); //screen size with camera
-        gamePort.apply();
-        gameCam.setToOrtho(false,Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        gamePort = new FitViewport(JumpPlungers.vWidth / JumpPlungers.PPM, JumpPlungers.vHeight / JumpPlungers.PPM, gameCam); //screen size with camera
+        //gamePort.apply();
+        gameCam.setToOrtho(false, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
 
         hud = new Hud(game.batch);
         p1C = new Player1Controller(game.batch);
@@ -68,30 +70,34 @@ public class PlayScreen implements Screen {
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("Map1.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map,1/JumpPlungers.PPM);
-        gameCam.position.set(gamePort.getWorldWidth() /2,gamePort.getWorldHeight()/2,0);
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / JumpPlungers.PPM);
 
-        world = new World(new Vector2(0,-2),true); //vector 2 is our gravity, setting everything to sleep unless pressed
+        gameCam.position.set(gamePort.getWorldWidth(), gamePort.getWorldHeight() / 2, 0);
+
+        world = new World(new Vector2(0, -30), true); //vector 2 is our gravity, setting everything to sleep unless pressed
         b2dr = new Box2DDebugRenderer();
-        b2worldCreator = new b2worldCreator(world,map);
+        b2worldCreator = new b2worldCreator(world, map);
 
-        player1 = new Player1(world,this);
-        music = JumpPlungers.manager.get("Audio/fightone_160bpm.mp3",Music.class);
+        player1 = new Player1(world, this);
+        player2 = new Player2(world, this);
+        music = JumpPlungers.manager.get("Audio/fightone_160bpm.mp3", Music.class);
         music.setLooping(true);
-        music.setVolume(0.05f);
-        //music.play();
-
+        music.setVolume(0.5f);
+        music.play();
 
 
     }
-    public TextureAtlas getAtlas(){
+
+    public TextureAtlas getAtlas() {
         return atlas;
     }
+
     @Override
     public void show() {
 
     }
-    public void handleInput(float delta){
+
+    public void handleInput(float delta) {
         /*
         if(p1C.isJumpPressed()&& player1.body.getLinearVelocity().x >=-0.6){
             player1.body.applyLinearImpulse(new Vector2(-0.2f,0), player1.body.getWorldCenter(),true);
@@ -104,24 +110,29 @@ public class PlayScreen implements Screen {
             System.out.println("P1 lunge pressed");
         }
         */
-        if(p1C.isLungePressed()&& player1.body.getPosition().y >0.16166648 && player1.body.getLinearVelocity().x <=0.6){
-            player1.body.applyLinearImpulse(new Vector2(0.2f+(float)Math.cos(270),0), player1.body.getWorldCenter(),true);
-            if(player1.body.getPosition().y == 0.16166647)
-                player1.body.applyLinearImpulse(new Vector2(0,0), player1.body.getWorldCenter(),true);
+        if (p1C.isLungePressed() && player1.body.getPosition().y > 0.16166648 && player1.body.getLinearVelocity().x <= 0.6) {
+            player1.currentState = Player1.State.Lunge;
+            player1.body.applyLinearImpulse(new Vector2(0.1f + (float) Math.cos(270)/JumpPlungers.PPM, -6f), player1.body.getWorldCenter(), true);
+            if (player1.body.getPosition().y == 0.16166647)
+                player1.body.applyLinearImpulse(new Vector2(0, 0), player1.body.getWorldCenter(), true);
             System.out.println("P1 lunge pressed");
         }
-        if(p1C.isJumpPressed()){
-            player1.body.applyLinearImpulse(new Vector2(0,0.6f), player1.body.getWorldCenter(),true);
-            System.out.println("P2 jump pressed");
+        if (p1C.isJumpPressed() && player1.body.getLinearVelocity().y < 50) {
+            player1.currentState = Player1.State.Jumping;
+            player1.body.applyLinearImpulse(new Vector2(0, 3f), player1.body.getWorldCenter(), true);
+            System.out.println("P1 jump pressed");
         }
     }
-    public void update(float delta){
+
+    public void update(float delta) {
         handleInput(delta);
-        world.step(1/60f,6,2);
+        world.step(1 / 60f, 6, 2);
         player1.update(delta);
+        player2.update(delta);
+        hud.update(delta);
         //gameCam.position.y= player1.body.getPosition().y;
         //if(player1.body.getPosition().x>JumpPlungers.vWidth/2/JumpPlungers.PPM)
-        gameCam.position.x = player1.body.getPosition().x+2f;
+        gameCam.position.x = player1.body.getPosition().x;
         gameCam.update();
         renderer.setView(gameCam);
         game.batch.setProjectionMatrix(gameCam.combined);
@@ -129,30 +140,31 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         //player1.draw(game.batch);
         game.batch.end();
-        System.out.println("sprite location : " + player1.sprite.getX() + " "+ player1.sprite.getY());
+        System.out.println("sprite location : " + player1.body.getPosition().y + " " + player1.body.getPosition().y);
 
     }
 
     @Override
     public void render(float delta) {
         update(delta);
-        Gdx.gl.glClearColor(0,0,0,1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.render();
 
-        b2dr.render(world,gameCam.combined.scale(2,2,0));
+        b2dr.render(world, gameCam.combined.scale(2, 2, 0));
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         game.batch.begin();
         player1.draw(game.batch);
+        player2.draw(game.batch);
         //player1.update(delta);
         game.batch.end();
 
         hud.stage.act(delta);
         //spriteBatch.setProjectionMatrix(hud.stage.getCamera().combined);
         // hud.stage.act(delta);
-        //hud.stage.draw();
+        hud.stage.draw();
 
         game.batch.setProjectionMatrix(Player1Controller.stage.getCamera().combined);
         p1C.stage.act(delta);
@@ -162,37 +174,53 @@ public class PlayScreen implements Screen {
         p2C.stage.act(delta);
         p2C.stage.draw();
 
-    }
+        if(roundOver()){
+            game.setScreen(new RoundOverScreen(game,player1,hud));
 
-    @Override
-    public void resize(int width, int height) {
-        gamePort.update(width, height);
-        p1C.resize(width, height);
-        p2C.resize(width, height);
-    }
-
-    @Override
-    public void pause() {
+        }
 
     }
 
-    @Override
-    public void resume() {
-
+    public boolean roundOver() {
+        if (hud.getTime() <=0)
+            return true;
+        return false;
     }
 
-    @Override
-    public void hide() {
-
+    public void gameOver() {
+        if (player1.getRoundsWon() == 3 || player1.isMatchOver()) {
+            player1.setMatchOver(true);
+        }
     }
+        @Override
+        public void resize ( int width, int height){
+            gamePort.update(width, height);
+            p1C.resize(width, height);
+            p2C.resize(width, height);
+        }
 
-    @Override
-    public void dispose() {
-        map.dispose();
-        renderer.dispose();
-        world.dispose();
-        b2dr.dispose();
-        hud.dispose();
+        @Override
+        public void pause () {
 
+        }
+
+        @Override
+        public void resume () {
+
+        }
+
+        @Override
+        public void hide () {
+
+        }
+
+        @Override
+        public void dispose () {
+            map.dispose();
+            renderer.dispose();
+            world.dispose();
+            b2dr.dispose();
+            hud.dispose();
+
+        }
     }
-}

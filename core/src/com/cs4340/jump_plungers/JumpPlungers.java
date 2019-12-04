@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.cs4340.jump_plungers.Screens.PlayScreen;
+import com.cs4340.jump_plungers.Screens.SelectModeScreen;
 
 public class JumpPlungers extends Game {
 	public SpriteBatch batch; // so all screens have acess
@@ -23,7 +24,7 @@ public class JumpPlungers extends Game {
 		manager = new AssetManager();
 		manager.load("Audio/fightone_160bpm.mp3", Music.class);
 		manager.finishLoading();
-		setScreen(new PlayScreen(this));
+		setScreen(new SelectModeScreen(this));
 	}
 
 	@Override
